@@ -1,0 +1,8 @@
+name: libra-pie-neutronics-env
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - openmc
