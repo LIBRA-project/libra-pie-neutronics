@@ -106,7 +106,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
     #
     # Tungsten : 19.3 g/cm3
     Material_10 = openmc.Material() 
-    Material_10.set_density('sum', None) 
+    Material_10.set_density('g/cm3', 19.3) 
     Material_10.add_nuclide('W182', 0.265, 'ao') 
     Material_10.add_nuclide('W183', 0.1431, 'ao') 
     Material_10.add_nuclide('W184', 0.3064, 'ao') 
@@ -136,7 +136,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
     # Reference: PNNL Report 15870 (Rev. 1)
     # Describes: General purpose neutron shielding
     Polyethylene = openmc.Material() 
-    Polyethylene.set_density('sum', None) 
+    Polyethylene.set_density('g/cm3', 0.93) 
     Polyethylene.add_nuclide('H1', 0.666662, 'ao') 
     Polyethylene.add_element('C', 0.333338, 'ao') 
 
@@ -152,7 +152,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
     # Reference: JNM 386-388 (2009) 119-121
     # Describes: General purpose neutron shielding
     Material_22 = openmc.Material() 
-    Material_22.set_density('sum', None) 
+    Material_22.set_density('g/cm3', 5.6) 
     Material_22.add_nuclide('H1', 0.0216, 'wo') 
     Material_22.add_element('Zr', 0.9784, 'wo') 
 
@@ -161,7 +161,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
     # Reference: JNM 386-388 (2009) 119-121
     # Describes: General purpose neutron shielding
     Material_23 = openmc.Material() 
-    Material_23.set_density('sum', None) 
+    Material_23.set_density('g/cm3', 1.18) 
     Material_23.add_nuclide('H1', 0.1073, 'wo') 
     Material_23.add_nuclide('B10', 0.0571, 'wo') 
     Material_23.add_nuclide('B11', 0.23, 'wo') 
@@ -172,7 +172,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
     # Describes: Highest intenstiy neutron production target
     # Notes: Uses ENDF-derived proton nuclear data libray
     Material_30 = openmc.Material() 
-    Material_30.set_density('sum', None) 
+    Material_30.set_density('g/cm3', 1.848) 
     Material_30.add_nuclide('Be9', 1.0, 'ao') 
 
     # Name: Concrete (Regular)
@@ -180,7 +180,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
     # Reference: Provided by Matthey Carey, MIT EHS/RPP (mgcarey@mit.edu)
     # Describes: Facility walls, foundation, floors for activation calculations
     Material_40 = openmc.Material() 
-    Material_40.set_density('sum', None) 
+    Material_40.set_density('g/cm3', 2.3) 
     Material_40.add_nuclide('Fe54', 2.0138e-05, 'ao') 
     Material_40.add_nuclide('Fe56', 0.00031874, 'ao') 
     Material_40.add_nuclide('Fe57', 7.2915e-06, 'ao') 
