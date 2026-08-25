@@ -2,6 +2,7 @@ import openmc
 import numpy as np 
 
 def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
+                      plots=openmc.Plots(),
                       added_cells=[], added_materials=[], overall_exclusion_region=None):
     #
     # **** Natural elements ****
@@ -1232,9 +1233,12 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
     geometry.remove_redundant_surfaces() 
     # print(geometry.get_all_cells())
 
+    vol_calc = openmc.VolumeCalculation([Cell_28], int(1e7))
+    settings.volume_calculations = [vol_calc]
 
     vault_model = openmc.model.Model(geometry=geometry, materials=materials, settings=settings, 
-            tallies=tallies)
+            tallies=tallies,
+            plots=plots)
 
     return vault_model
 

@@ -8,7 +8,9 @@ def build_libra_pie_revolved(salt_material=None,
                              multiplier_thickness=5,
                              reflector_material=None,
                              reflector_thickness=0,
-                             translation_vector=[0,0,0]):
+                             translation_vector=[0,0,0],
+                             lead_thickness=0,
+                             insulation_thickness=0):
 
     ###### Materials ############################
 
@@ -370,8 +372,6 @@ def build_libra_pie_revolved(salt_material=None,
     multiplier_height = 28
     # shield_thickness = 6*2.54
     support_plate_thickness = 2.54
-    # lead_thickness = 2.54
-    lead_thickness = 0
     # Tank double wall surfaces
 
     # GEOMETRY
@@ -626,8 +626,6 @@ def build_libra_pie_revolved(salt_material=None,
     heater_reentrant_bot_plane_1 = openmc.ZPlane(25.60)
     heater_reentrant_bot_plane_2 = openmc.ZPlane(25.80)
 
-    heater_reentrant_top_plane = openmc.ZPlane(tank_top_cover_plane_1.z0 + \
-                                                25.40)
 
     ## Fill Tube
     fill_tube_cyl_1 = openmc.ZCylinder(r=2.34, 
@@ -636,7 +634,6 @@ def build_libra_pie_revolved(salt_material=None,
     fill_tube_cyl_2 = openmc.ZCylinder(r=2.54,
                                     x0=np.sqrt(20.32**2 - 14.37**2),
                                     y0=14.37)
-    fill_tube_top_plane = openmc.ZPlane(tank_top_cover_plane_1.z0 + 25.40)
 
     ## Gas tubes entering the inner tank (for salt tritium removal)
 
@@ -682,7 +679,6 @@ def build_libra_pie_revolved(salt_material=None,
                                                 x0=37.59,
                                                 y0=13.68)
 
-    thermocouple_tube_top_plane = openmc.ZPlane(tank_top_cover_plane_1.z0 + 25.40)
 
     # print(source_z_point)
 
@@ -709,19 +705,18 @@ def build_libra_pie_revolved(salt_material=None,
     center_tank_heater_plane_2 = openmc.ZPlane(center_tank_heater_plane_1.z0 + 0.2)
 
     salt_gas_tube_top_plane = openmc.ZPlane(130)
-    lead_shield_in_cyl = openmc.ZCylinder(r=outer_cyl_4.r+5)
+    lead_shield_in_cyl = openmc.ZCylinder(r=outer_cyl_4.r + insulation_thickness)
     lead_shield_top_plane_1 = openmc.ZPlane(salt_gas_tube_top_plane.z0)
-    lead_shield_top_plane_2 = openmc.ZPlane(lead_shield_top_plane_1.z0 + lead_thickness)
 
     support_plate_bot_plane = openmc.ZPlane(z_plane_1.z0 - support_plate_thickness)
 
 
-    shield_bot_plane_2 = openmc.ZPlane(support_plate_bot_plane.z0 - 10)
+    shield_bot_plane_2 = openmc.ZPlane(support_plate_bot_plane.z0 - insulation_thickness)
     shield_bot_plane_1 = openmc.ZPlane(shield_bot_plane_2.z0 - reflector_thickness)
 
-    shield_in_cyl = openmc.ZCylinder(r=lead_shield_in_cyl.r+lead_thickness)
-    shield_out_cyl = openmc.ZCylinder(r=shield_in_cyl.r+reflector_thickness)
-    shield_top_plane_1 = openmc.ZPlane(lead_shield_top_plane_2.z0)
+    shield_in_cyl = openmc.ZCylinder(r=lead_shield_in_cyl.r + lead_thickness)
+    shield_out_cyl = openmc.ZCylinder(r=shield_in_cyl.r + reflector_thickness)
+    shield_top_plane_1 = openmc.ZPlane(lead_shield_top_plane_1.z0 + lead_thickness)
     shield_top_plane_2 = openmc.ZPlane(shield_top_plane_1.z0 + reflector_thickness)
 
     floor_rpp = openmc.model.RectangularParallelepiped(-300, 300, -300, 300, -150, -100)
@@ -833,44 +828,44 @@ def build_libra_pie_revolved(salt_material=None,
 
     ## heater reentrant tubes
     heater_reentrant_1_reg = (+heater_reentrant_1_in_cyl & -heater_reentrant_1_out_cyl \
-                            & -heater_reentrant_top_plane & +heater_reentrant_bot_plane_2) \
+                            & -lead_shield_top_plane_1 & +heater_reentrant_bot_plane_2) \
                             | (-heater_reentrant_1_out_cyl \
                                 & +heater_reentrant_bot_plane_1 & -heater_reentrant_bot_plane_2)
     heater_reentrant_1_cell = openmc.Cell(region=heater_reentrant_1_reg, fill=inconel625,
                                             name='Heater Reentrant Tube 1')
-    heater_fill_1_reg = -heater_reentrant_1_in_cyl & -heater_reentrant_top_plane & +heater_reentrant_bot_plane_2
+    heater_fill_1_reg = -heater_reentrant_1_in_cyl & -lead_shield_top_plane_1 & +heater_reentrant_bot_plane_2
     heater_fill_1_cell = openmc.Cell(region=heater_fill_1_reg, fill=air, name='Heater 1') 
 
-    heater_overall_1_reg = -heater_reentrant_1_out_cyl & +heater_reentrant_bot_plane_1 & -heater_reentrant_top_plane
+    heater_overall_1_reg = -heater_reentrant_1_out_cyl & +heater_reentrant_bot_plane_1 & -lead_shield_top_plane_1
 
     heater_reentrant_2_reg = (+heater_reentrant_2_in_cyl & -heater_reentrant_2_out_cyl \
-                            & -heater_reentrant_top_plane & +heater_reentrant_bot_plane_2) \
+                            & -lead_shield_top_plane_1 & +heater_reentrant_bot_plane_2) \
                             | (-heater_reentrant_2_out_cyl \
                                 & +heater_reentrant_bot_plane_1 & -heater_reentrant_bot_plane_2)
     heater_reentrant_2_cell = openmc.Cell(region=heater_reentrant_2_reg, fill=inconel625,
                                             name='Heater Reentrant Tube 2')
-    heater_fill_2_reg = -heater_reentrant_2_in_cyl & -heater_reentrant_top_plane & +heater_reentrant_bot_plane_2
+    heater_fill_2_reg = -heater_reentrant_2_in_cyl & -lead_shield_top_plane_1 & +heater_reentrant_bot_plane_2
     heater_fill_2_cell = openmc.Cell(region=heater_fill_2_reg, fill=air, name='Heater 2')
 
-    heater_overall_2_reg = -heater_reentrant_2_out_cyl & +heater_reentrant_bot_plane_1 & -heater_reentrant_top_plane
+    heater_overall_2_reg = -heater_reentrant_2_out_cyl & +heater_reentrant_bot_plane_1 & -lead_shield_top_plane_1
 
     heater_reentrant_3_reg = (+heater_reentrant_3_in_cyl & -heater_reentrant_3_out_cyl \
-                            & -heater_reentrant_top_plane & +heater_reentrant_bot_plane_2) \
+                            & -lead_shield_top_plane_1 & +heater_reentrant_bot_plane_2) \
                             | (-heater_reentrant_3_out_cyl \
                                 & +heater_reentrant_bot_plane_1 & -heater_reentrant_bot_plane_2)
     heater_reentrant_3_cell = openmc.Cell(region=heater_reentrant_3_reg, fill=inconel625,
                                             name='Heater Reentrant Tube 3')
-    heater_fill_3_reg = -heater_reentrant_3_in_cyl & -heater_reentrant_top_plane & +heater_reentrant_bot_plane_2
+    heater_fill_3_reg = -heater_reentrant_3_in_cyl & -lead_shield_top_plane_1 & +heater_reentrant_bot_plane_2
     heater_fill_3_cell = openmc.Cell(region=heater_fill_3_reg, fill=air, name='Heater 3') 
 
-    heater_overall_3_reg = -heater_reentrant_3_out_cyl & +heater_reentrant_bot_plane_1 & -heater_reentrant_top_plane
+    heater_overall_3_reg = -heater_reentrant_3_out_cyl & +heater_reentrant_bot_plane_1 & -lead_shield_top_plane_1
 
     ## fill tube
     fill_tube_reg = +fill_tube_cyl_1 & -fill_tube_cyl_2 \
-                    & +tank_top_cover_plane_1 & -fill_tube_top_plane
+                    & +tank_top_cover_plane_1 & -lead_shield_top_plane_1
     fill_tube_cell = openmc.Cell(region=fill_tube_reg, fill=inconel625,
                                 name='fill tube')
-    fill_tube_air_reg = -fill_tube_cyl_1 & +tank_top_cover_plane_1 & -fill_tube_top_plane
+    fill_tube_air_reg = -fill_tube_cyl_1 & +tank_top_cover_plane_1 & -lead_shield_top_plane_1
     fill_tube_air_cell = openmc.Cell(region=fill_tube_air_reg, name='fill tube air')
 
     ## Salt Gas Tubes
@@ -889,23 +884,23 @@ def build_libra_pie_revolved(salt_material=None,
     salt_gas_fill_cell = openmc.Cell(region=salt_gas_fill_reg, fill=air, name='Salt Gas Fill')
     ## thermocouple tubes
     thermocouple_tube_1_reg = +thermocouple_tube_1_cyl_1 & -thermocouple_tube_1_cyl_2 \
-                            & +tank_top_cover_plane_1 & -thermocouple_tube_top_plane
+                            & +tank_top_cover_plane_1 & -lead_shield_top_plane_1
     thermocouple_tube_1_cell = openmc.Cell(region=thermocouple_tube_1_reg, fill=inconel625,
                                         name='Thermcouple Tube 1')
 
     thermocouple_tube_2_reg = +thermocouple_tube_2_cyl_1 & -thermocouple_tube_2_cyl_2 \
-                            & +tank_top_cover_plane_1 & -thermocouple_tube_top_plane
+                            & +tank_top_cover_plane_1 & -lead_shield_top_plane_1
     thermocouple_tube_2_cell = openmc.Cell(region=thermocouple_tube_2_reg, fill=inconel625,
                                         name='Thermcouple Tube 2')
 
     thermocouple_tube_3_reg = +thermocouple_tube_3_cyl_1 & -thermocouple_tube_3_cyl_2 \
-                            & +tank_top_cover_plane_1 & -thermocouple_tube_top_plane
+                            & +tank_top_cover_plane_1 & -lead_shield_top_plane_1
     thermocouple_tube_3_cell = openmc.Cell(region=thermocouple_tube_3_reg, fill=inconel625,
                                         name='Thermcouple Tube 3')
 
-    thermocouple_fill_reg = (-thermocouple_tube_1_cyl_1 & +tank_top_cover_plane_1 & -thermocouple_tube_top_plane) \
-                            | (-thermocouple_tube_2_cyl_1 & +tank_top_cover_plane_1 & -thermocouple_tube_top_plane) \
-                            | (-thermocouple_tube_3_cyl_1 & +tank_top_cover_plane_1 & -thermocouple_tube_top_plane)
+    thermocouple_fill_reg = (-thermocouple_tube_1_cyl_1 & +tank_top_cover_plane_1 & -lead_shield_top_plane_1) \
+                            | (-thermocouple_tube_2_cyl_1 & +tank_top_cover_plane_1 & -lead_shield_top_plane_1) \
+                            | (-thermocouple_tube_3_cyl_1 & +tank_top_cover_plane_1 & -lead_shield_top_plane_1)
     thermocouple_fill_cell = openmc.Cell(fill=air, region=thermocouple_fill_reg, name='thermocouple air')
 
     ## Inner tank top cover
@@ -929,45 +924,65 @@ def build_libra_pie_revolved(salt_material=None,
                 & +salt_gas_tube_1_cyl_2 & +salt_gas_tube_2_cyl_2 \
                 & +thermocouple_tube_1_cyl_2 & +thermocouple_tube_2_cyl_2 \
                 & +thermocouple_tube_3_cyl_2 
+    top_air_1_cell = openmc.Cell(region=top_air_1_reg, fill=air, name='top_air_1')
 
     ## Outer tank top cover
     # Inner region
     outer_tank_cover_reg_1 = +inner_cyl_1 & -inner_cyl_4 \
                     & +y_plane_4 & +x_plane_4 \
                     & +double_wall_top_plane_1 & -double_wall_top_plane_2
+    outer_tank_cover_1_cell = openmc.Cell(region=outer_tank_cover_reg_1, fill=inconel625, name='outer_tank_cover_1')
+
     top_air_2_reg_1 = +inner_cyl_1 & -inner_cyl_4 \
                     & +y_plane_4 & +x_plane_4 \
                     & +double_wall_top_plane_2 & -salt_gas_tube_top_plane
+    top_air_2_1_cell = openmc.Cell(region=top_air_2_reg_1, fill=air, name='top_air_2_1')
+    
     # horizontal region
     outer_tank_cover_reg_hor = +y_plane_1 & -y_plane_4 \
                     & +inner_cyl_1 & -outer_cyl_4 & +x_plane_1 \
                     & +double_wall_top_plane_1 & -double_wall_top_plane_2
+    outer_tank_cover_hor_cell = openmc.Cell(region=outer_tank_cover_reg_hor, fill=inconel625, name='outer_tank_cover_hor')
+
     top_air_2_reg_hor = +y_plane_1 & -y_plane_4 \
                     & +inner_cyl_1 & -outer_cyl_4 & +x_plane_1 \
                     & +double_wall_top_plane_2 & -salt_gas_tube_top_plane
+    top_air_2_hor_cell = openmc.Cell(region=top_air_2_reg_hor, fill=air, name='top_air_2_hor')
+
     # vertical region
     outer_tank_cover_reg_ver = +x_plane_1 & -x_plane_4 \
                     & +inner_cyl_1 & -outer_cyl_4 & +y_plane_1 \
                     & +double_wall_top_plane_1 & -double_wall_top_plane_2
+    outer_tank_cover_ver_cell = openmc.Cell(region=outer_tank_cover_reg_ver, fill=inconel625, name='outer_tank_cover_ver')
+
     top_air_2_reg_ver = +x_plane_1 & -x_plane_4 \
                     & +inner_cyl_1 & -outer_cyl_4 & +y_plane_1 \
                     & +double_wall_top_plane_2 & -salt_gas_tube_top_plane
+    top_air_2_ver_cell = openmc.Cell(region=top_air_2_reg_ver, fill=air, name='top_air_2_ver')
+
     # outer region
     outer_tank_cover_reg_2 = +outer_cyl_1 & -outer_cyl_4 \
                     & +y_plane_4 & +x_plane_4 \
                     & +double_wall_top_plane_1 & -double_wall_top_plane_2
+    outer_tank_cover_2_cell = openmc.Cell(region=outer_tank_cover_reg_2, fill=inconel625, name='outer_tank_cover_2')
+
     top_air_2_reg_2 = +outer_cyl_1 & -outer_cyl_4 \
                     & +y_plane_4 & +x_plane_4 \
                     & +double_wall_top_plane_2 & -salt_gas_tube_top_plane
-    top_air_3_reg = -outer_cyl_1 & +center_tank_top_plane_2 & -salt_gas_tube_top_plane
+    top_air_2_2_cell = openmc.Cell(region=top_air_2_reg_2, fill=air, name='top_air_2_2')
 
-    top_air_reg = top_air_1_reg | top_air_2_reg_1 | top_air_2_reg_2 \
-                | top_air_2_reg_hor | top_air_2_reg_ver | top_air_3_reg
+    # Air above center tank
+    top_air_3_reg = -inner_cyl_1 & +center_tank_top_plane_2 & -salt_gas_tube_top_plane
+    top_air_3_cell = openmc.Cell(region=top_air_3_reg, fill=air, name='top_air_3')
 
-    outer_tank_cover_reg = outer_tank_cover_reg_1 | outer_tank_cover_reg_hor \
-                        | outer_tank_cover_reg_ver | outer_tank_cover_reg_2
-    outer_tank_cover_cell = openmc.Cell(region=outer_tank_cover_reg, fill=inconel625,
-                                        name='Outer Tank Top Cover')
+    # top_air_reg = top_air_1_reg | top_air_2_reg_1 | top_air_2_reg_2 \
+    #             | top_air_2_reg_hor | top_air_2_reg_ver | top_air_3_reg
+    
+
+    # outer_tank_cover_reg = outer_tank_cover_reg_1 | outer_tank_cover_reg_hor \
+    #                     | outer_tank_cover_reg_ver | outer_tank_cover_reg_2
+    # outer_tank_cover_cell = openmc.Cell(region=outer_tank_cover_reg, fill=inconel625,
+    #                                     name='Outer Tank Top Cover')
 
     ## Salt region and cell
     salt_reg = +inner_cyl_4 & -outer_cyl_1 & +x_plane_4 & +y_plane_4 \
@@ -994,7 +1009,7 @@ def build_libra_pie_revolved(salt_material=None,
     center_tank_out_gap_reg = -inner_cyl_1 & +center_tank_bot_plane_1 & -center_tank_top_plane_2 & +center_tank_cyl_4
     center_tank_out_gap_cell = openmc.Cell(region=center_tank_out_gap_reg, fill=air, name='Center Tank Outer Gap')
 
-    center_tank_out_wall_reg = (-center_tank_cyl_4 & +center_tank_top_plane_1 & -center_tank_top_plane_2) \
+    center_tank_out_wall_reg = (-center_tank_cyl_4 & +center_tank_top_plane_1 & -center_tank_top_plane_2 & +center_tank_heat_tube_out_cyl) \
                             | (-center_tank_cyl_4 & +center_tank_cyl_3 & +center_tank_bot_plane_2 & -center_tank_top_plane_1) \
                             | (-center_tank_cyl_4 & +center_tank_bot_plane_1 & -center_tank_bot_plane_2)
     center_tank_out_wall_cell = openmc.Cell(region=center_tank_out_wall_reg, fill=inconel625, name='center tank outer wall')
@@ -1009,13 +1024,13 @@ def build_libra_pie_revolved(salt_material=None,
 
     center_tank_heater_tube_reg = (-center_tank_heat_tube_out_cyl & +center_tank_heater_plane_1 & -center_tank_heater_plane_2) \
                                 | (-center_tank_heat_tube_out_cyl & +center_tank_heat_tube_in_cyl & +center_tank_heater_plane_2 \
-                                    & -tank_top_cover_plane_2)
+                                    & -center_tank_top_plane_2)
     center_tank_heater_tube_cell = openmc.Cell(region=center_tank_heater_tube_reg, fill=inconel625, name='center tank heater tube')
 
-    center_tank_heater_fill_reg = -center_tank_heat_tube_in_cyl & +center_tank_heater_plane_2 & -tank_top_cover_plane_2
+    center_tank_heater_fill_reg = -center_tank_heat_tube_in_cyl & +center_tank_heater_plane_2 & -center_tank_top_plane_2
     center_tank_heater_fill_cell = openmc.Cell(region=center_tank_heater_fill_reg, fill=air, name='center tank heater fill')
 
-    center_tank_overall_heater_reg = -center_tank_heat_tube_out_cyl & +center_tank_heater_plane_1 & -tank_top_cover_plane_2
+    center_tank_overall_heater_reg = -center_tank_heat_tube_out_cyl & +center_tank_heater_plane_1 & -center_tank_top_plane_2
 
     center_tank_salt_reg = (-center_tank_cyl_1 & +center_tank_bot_plane_4 & -center_tank_heater_plane_1) \
                         | (-center_tank_cyl_1 & +center_tank_heat_tube_out_cyl & +center_tank_heater_plane_1 & -center_tank_salt_top_plane)
@@ -1025,19 +1040,13 @@ def build_libra_pie_revolved(salt_material=None,
     center_tank_headspace_cell = openmc.Cell(region=center_tank_headspace_reg, fill=air, name='center tank headspace')
 
 
-    lead_shield_reg = (-shield_in_cyl & +lead_shield_in_cyl & +z_plane_1 & -lead_shield_top_plane_1) \
-                    | (-shield_in_cyl & +lead_shield_top_plane_1 & -lead_shield_top_plane_2)
-    lead_shield_cell = openmc.Cell(region=lead_shield_reg, fill=air, name='lead shield')
-
-    inner_air_reg = -inner_cyl_1 & -center_tank_bot_plane_1 & +shield_bot_plane_1 & +x_plane_1 & +y_plane_1 \
+    inner_air_reg = -inner_cyl_1 & -center_tank_bot_plane_1 & +shield_bot_plane_1 \
                     & ~multiplier_reg & ~gen_1_region
     inner_air_cell = openmc.Cell(fill=air, region=inner_air_reg, name='Inner Air')
 
 
 
-    # libra_outside_air_reg = -outer_cyl_4 & +z_plane_1 & -salt_gas_tube_top_plane & +x_plane_1 & +y_plane_1 \
-    #                 & ~out_wall_reg & ~wall_gap_reg & ~inner_wall_reg \
-    #                 & ~salt_reg & ~inner_tank_air_reg \
+    # libra_outside_air_reg = -outer_cyl_4 & +tank_top_cover_plane_1 & -salt_gas_tube_top_plane & +x_plane_1 & +y_plane_1 \
     #                 & ~outer_tank_cover_reg \
     #                 & ~inner_tank_cover_reg & ~fill_tube_reg \
     #                 & ~heater_overall_1_reg & ~heater_overall_2_reg \
@@ -1045,21 +1054,30 @@ def build_libra_pie_revolved(salt_material=None,
     #                 & ~salt_gas_tube_1_reg & ~salt_gas_tube_2_reg \
     #                 & ~thermocouple_tube_1_reg & ~thermocouple_tube_2_reg \
     #                 & ~thermocouple_tube_3_reg \
-    #                 & ~multiplier_reg
-    libra_outside_air_reg = top_air_reg
+    #                 & ~center_tank_out_wall_reg
+    # libra_outside_air_reg = top_air_reg
 
-    libra_outside_air_cell = openmc.Cell(region=libra_outside_air_reg, fill=air, name='LIBRA Outside Air')
+    # libra_outside_air_cell = openmc.Cell(region=libra_outside_air_reg, fill=air, name='LIBRA Outside Air')
 
     support_plate_reg = +inner_cyl_1 & -shield_in_cyl & +support_plate_bot_plane & -z_plane_1
     support_plate_cell = openmc.Cell(region=support_plate_reg, fill=steel_lowC, name='Support Plate')
 
-    libra_insulation_reg = (+outer_cyl_4 & -lead_shield_in_cyl & +support_plate_bot_plane & -shield_top_plane_1) \
-                        | (+inner_cyl_1 & -shield_in_cyl & +shield_bot_plane_2 & -support_plate_bot_plane)
+    libra_insulation_reg = ((+outer_cyl_4 & -lead_shield_in_cyl & +support_plate_bot_plane & -lead_shield_top_plane_1) \
+                        | (+inner_cyl_1 & -lead_shield_in_cyl & +shield_bot_plane_2 & -support_plate_bot_plane)) \
+                        & ~support_plate_reg
     libra_insulation_cell = openmc.Cell(region=libra_insulation_reg, fill=air, name='LIBRA insulation')
 
-    libra_shielding_reg = (-shield_out_cyl & +shield_top_plane_1 & -shield_top_plane_2 & +x_plane_1 & +y_plane_1) \
-                        | (-shield_out_cyl & +shield_in_cyl & +shield_bot_plane_2 & -shield_top_plane_1 & +x_plane_1 & +y_plane_1) \
-                        | (-shield_out_cyl & +inner_cyl_1 & +shield_bot_plane_1 & -shield_bot_plane_2 & +x_plane_1 & +y_plane_1)
+    lead_shield_reg = (-shield_in_cyl & +lead_shield_in_cyl & +z_plane_1 & -lead_shield_top_plane_1) \
+                    | (-shield_in_cyl & +lead_shield_top_plane_1 & -shield_top_plane_1)
+    lead_shield_cell = openmc.Cell(region=lead_shield_reg, fill=air, name='lead shield')
+
+    # Annular air pocket bewteen support plate, insulation and neutron shield
+    shield_air_pocket_reg = -shield_in_cyl & +lead_shield_in_cyl & +shield_bot_plane_2 & -support_plate_bot_plane
+    shield_air_pocket_cell = openmc.Cell(region=shield_air_pocket_reg, fill=air, name='shield air pocket')
+
+    libra_shielding_reg = (-shield_out_cyl & +shield_top_plane_1 & -shield_top_plane_2) \
+                        | (-shield_out_cyl & +shield_in_cyl & +shield_bot_plane_2 & -shield_top_plane_1) \
+                        | (-shield_out_cyl & +inner_cyl_1 & +shield_bot_plane_1 & -shield_bot_plane_2)
     libra_shielding_cell = openmc.Cell(region=libra_shielding_reg, fill=reflector_material, name='LIBRA Shield')
     # print(libra_shielding_cell.fill.name)
 
@@ -1073,7 +1091,10 @@ def build_libra_pie_revolved(salt_material=None,
             fill_tube_air_cell, salt_gas_fill_cell,
             thermocouple_tube_1_cell, thermocouple_tube_2_cell, thermocouple_tube_3_cell,
             thermocouple_fill_cell,
-            inner_tank_cover_cell, outer_tank_cover_cell,
+            inner_tank_cover_cell, 
+            # outer_tank_cover_cell,
+            outer_tank_cover_1_cell, outer_tank_cover_hor_cell, 
+            outer_tank_cover_ver_cell, outer_tank_cover_2_cell,
             salt_cell, inner_tank_air_cell,
             multiplier_cell, 
             center_tank_out_gap_cell, center_tank_out_wall_cell,
@@ -1081,14 +1102,21 @@ def build_libra_pie_revolved(salt_material=None,
             center_tank_heater_tube_cell, center_tank_heater_fill_cell,
             center_tank_salt_cell, center_tank_headspace_cell,
             inner_air_cell,
-            libra_outside_air_cell,
+            top_air_1_cell, top_air_2_1_cell,
+            top_air_2_hor_cell, top_air_2_ver_cell,
+            top_air_2_2_cell, 
+            top_air_3_cell,
             support_plate_cell, libra_insulation_cell, 
             lead_shield_cell, libra_shielding_cell,
+            shield_air_pocket_cell,
             gen_1_cell]
     libra_quarter_1_universe = openmc.Universe(cells=libra_quarter_1_cells)
 
     libra_quarter_1_cell = openmc.Cell(region=libra_quarter_1_reg, 
                                         fill=libra_quarter_1_universe, name='Quad 1')
+    
+    # temp_reg = -libra_out_cyl & +libra_bot_plane & -libra_top_plane & ~libra_quarter_1_reg
+    # temp_cell = openmc.Cell(region=temp_reg, fill=None, name='Temporary Cell')
 
     libra_quarter_2_reg = libra_quarter_1_reg.rotate((0,0,90))
     libra_quarter_2_cell = openmc.Cell(region=libra_quarter_2_reg, 
@@ -1106,7 +1134,8 @@ def build_libra_pie_revolved(salt_material=None,
     libra_quarter_4_cell.rotation = [0.0, 0.0, 270.0]
 
     libra_universe = openmc.Universe(cells=[libra_quarter_1_cell, libra_quarter_2_cell, 
-                                            libra_quarter_3_cell, libra_quarter_4_cell]) 
+                                            libra_quarter_3_cell, libra_quarter_4_cell])
+    # libra_universe = openmc.Universe(cells=[libra_quarter_1_cell, temp_cell]) 
 
     libra_reg = -libra_out_cyl & +libra_bot_plane & -libra_top_plane 
     libra_reg = libra_reg.translate(translation_vector)
