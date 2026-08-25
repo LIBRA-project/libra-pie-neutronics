@@ -2,6 +2,7 @@ import openmc
 import numpy as np 
 
 def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
+                      plots=openmc.Plots(),
                       added_cells=[], added_materials=[], overall_exclusion_region=None):
     #
     # **** Natural elements ****
@@ -323,7 +324,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # Explicit declaration of the outer void
     Region_1000 = +Surface_95  
-    Cell_1000 = openmc.Cell(fill=None, region=Region_1000) 
+    Cell_1000 = openmc.Cell(fill=None, region=Region_1000, name='Cell_1000') 
 
     # 7
     # Surface box used to cutout Room III from the basement ceiling cell
@@ -382,7 +383,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The raised floor in Room IV 
     Region_2 = -Surface_79  
-    Cell_2 = openmc.Cell(fill=Concrete, region=Region_2) 
+    Cell_2 = openmc.Cell(fill=Concrete, region=Region_2, name='Cell_2') 
 
     #
     # 77
@@ -434,27 +435,27 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The main air chamber of Room IV 
     Region_3 = -Surface_93 & (+Surface_92 | -Surface_91) & +Surface_89 & +Surface_87 & +Surface_88 & +Surface_90 & +Surface_79 & +Surface_85 & +Surface_86 & +Surface_80 & +Surface_81 & +Surface_78 & +Surface_77  
-    Cell_3 = openmc.Cell(fill=Air, region=Region_3) 
+    Cell_3 = openmc.Cell(fill=Air, region=Region_3, name='Cell_3') 
 
     # The north CMU wall in Room IV
     Region_4 = -Surface_92 & +Surface_91  
-    Cell_4 = openmc.Cell(fill=Concrete, region=Region_4) 
+    Cell_4 = openmc.Cell(fill=Concrete, region=Region_4, name='Cell_4') 
 
     # The southern (staircase) CMU wall in Room IV 
     Region_5 = -Surface_89  
-    Cell_5 = openmc.Cell(fill=Concrete, region=Region_5) 
+    Cell_5 = openmc.Cell(fill=Concrete, region=Region_5, name='Cell_5') 
 
     # The south-east pillar in Room IV 
     Region_6 = -Surface_87  
-    Cell_6 = openmc.Cell(fill=Concrete, region=Region_6) 
+    Cell_6 = openmc.Cell(fill=Concrete, region=Region_6, name='Cell_6') 
 
     # The south-west pillar in Room IV
     Region_7 = -Surface_88  
-    Cell_7 = openmc.Cell(fill=Concrete, region=Region_7) 
+    Cell_7 = openmc.Cell(fill=Concrete, region=Region_7, name='Cell_7') 
 
     # The south foundation wall in Room IV 
     Region_8 = -Surface_90  
-    Cell_8 = openmc.Cell(fill=Concrete, region=Region_8) 
+    Cell_8 = openmc.Cell(fill=Concrete, region=Region_8, name='Cell_8') 
 
     #
     # 74
@@ -462,7 +463,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The CMU wall in Room II separating the Maze from NW13-016  
     Region_9 = -Surface_74  
-    Cell_9 = openmc.Cell(fill=Concrete, region=Region_9) 
+    Cell_9 = openmc.Cell(fill=Concrete, region=Region_9, name='Cell_9') 
 
     #
     # 75
@@ -470,7 +471,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The CMU wall in Room II separating the Maze from NW13-016 
     Region_10 = -Surface_75  
-    Cell_10 = openmc.Cell(fill=Concrete, region=Region_10) 
+    Cell_10 = openmc.Cell(fill=Concrete, region=Region_10, name='Cell_10') 
 
     #
     # 42
@@ -482,7 +483,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The CMU wall in Room II separating the Maze from NW13-016 
     Region_11 = -Surface_76 & +Surface_42  
-    Cell_11 = openmc.Cell(fill=Concrete, region=Region_11) 
+    Cell_11 = openmc.Cell(fill=Concrete, region=Region_11, name='Cell_11') 
 
     #
     # The cuboid defining the outermost boundary of the Vault door in Room III
@@ -498,7 +499,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The main Vault shield door in Room III
     Vault_door_reg = -Surface_13 & -Surface_14 & -Surface_15  
-    Vault_door_cell = openmc.Cell(fill=Concrete, region=Vault_door_reg) 
+    Vault_door_cell = openmc.Cell(fill=Concrete, region=Vault_door_reg, name='Vault_door_cell') 
 
     #
     # North B-HDPE shield in entrance to Vault in Room III
@@ -506,7 +507,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The northern Ricorad extra Vault door shielding in Room III
     Vault_door_shield_n_pillar_reg = -Surface_17  
-    Vault_door_shield_n_pillar_cell = openmc.Cell(fill=RicoRad, region=Vault_door_shield_n_pillar_reg) 
+    Vault_door_shield_n_pillar_cell = openmc.Cell(fill=RicoRad, region=Vault_door_shield_n_pillar_reg, name='Vault_door_shield_n_pillar_cell') 
 
     #
     # South B-HDPE shield in entrance to Vault in Room III
@@ -514,7 +515,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The southern Ricorad extra Vault door shielding in Room III 
     Vault_door_shield_s_pillar_reg = -Surface_18  
-    Vault_door_shield_s_pillar_cell = openmc.Cell(fill=RicoRad, region=Vault_door_shield_s_pillar_reg) 
+    Vault_door_shield_s_pillar_cell = openmc.Cell(fill=RicoRad, region=Vault_door_shield_s_pillar_reg, name='Vault_door_shield_s_pillar_cell') 
 
     #
     # Surface definition for west iron-brick pile around DANTE selection magnet
@@ -522,7 +523,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The western DANTE beamline (Fe or Pb fill?) concrete block shield 
     DANTE_vault_w_shield_reg = -Surface_10  
-    DANTE_vault_w_shield_cell = openmc.Cell(fill=IronConcrete, region=DANTE_vault_w_shield_reg) 
+    DANTE_vault_w_shield_cell = openmc.Cell(fill=IronConcrete, region=DANTE_vault_w_shield_reg, name='DANTE_vault_w_shield_cell') 
     # DANTE_vault_w_shield_cell = openmc.Cell(fill=Air, region=DANTE_vault_w_shield_reg)
 
     #
@@ -531,7 +532,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The eastern DANTE beamline (Fe or Pb fill?) concrete block shield 
     DANTE_vault_e_shield_reg = -Surface_9  
-    DANTE_vault_e_shield_cell = openmc.Cell(fill=IronConcrete, region=DANTE_vault_e_shield_reg) 
+    DANTE_vault_e_shield_cell = openmc.Cell(fill=IronConcrete, region=DANTE_vault_e_shield_reg, name='DANTE_vault_e_shield_cell') 
     # DANTE_vault_e_shield_cell = openmc.Cell(fill=Air, region=DANTE_vault_e_shield_reg) 
 
     #
@@ -548,7 +549,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The CMU wall partially covering the north shield wall in Room III
     Vault_north_wall_ext_reg = -Surface_22 & -Surface_48 & +Surface_11  
-    Vault_north_wall_ext_cell = openmc.Cell(fill=Concrete, region=Vault_north_wall_ext_reg) 
+    Vault_north_wall_ext_cell = openmc.Cell(fill=Concrete, region=Vault_north_wall_ext_reg, name='Vault_north_wall_ext_cell') 
 
     # Surface of arbitrary size that will be cut by two 2.8 degree planes
     # in order to define the east foundation wall in Room II
@@ -556,7 +557,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The east foundation wall in Room II
     Region_18 = -Surface_43 & +Surface_48 & -Surface_49  
-    Cell_18 = openmc.Cell(fill=Concrete, region=Region_18) 
+    Cell_18 = openmc.Cell(fill=Concrete, region=Region_18, name='Cell_18') 
 
     #
     # 40
@@ -677,15 +678,15 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
         (+Surface_43 | -Surface_48 | +Surface_49) & \
         (+Surface_53 | +Surface_49) & \
         +Surface_74 & +Surface_75 & (+Surface_76 | -Surface_42) & +Surface_46 & +Surface_47 & +Surface_50 & +Surface_51 & (+Surface_72 | -Surface_40 | -Surface_41 | -Surface_56 | -Surface_57 | -Surface_58) & (+Surface_73 | -Surface_58) & (+Surface_44 | -Surface_59 | -Surface_62) & (+Surface_45 | -Surface_59 | -Surface_60) & (+Surface_65 | -Surface_60) & +Surface_59 & +Surface_60 & +Surface_61 & +Surface_56 & +Surface_57 & +Surface_58 & +Surface_62 & +Surface_63 & +Surface_64 & +Surface_52 & +Surface_66 & +Surface_67 & +Surface_68 & +Surface_69 & +Surface_70 & +Surface_71  
-    Cell_19 = openmc.Cell(fill=Air, region=Region_19) 
+    Cell_19 = openmc.Cell(fill=Air, region=Region_19, name='Vault Room Air') 
 
     # The floor separating basement and first floor labs
     Region_20 = -Surface_8 & +Surface_7 & -Surface_49  
-    Cell_20 = openmc.Cell(fill=Concrete, region=Region_20) 
+    Cell_20 = openmc.Cell(fill=Concrete, region=Region_20, name='Cell_20') 
 
     # The foundation underneath all basement lab rooms
     Region_21 = -Surface_94 & -Surface_49  
-    Cell_21 = openmc.Cell(fill=Concrete, region=Region_21) 
+    Cell_21 = openmc.Cell(fill=Concrete, region=Region_21, name='Cell_21') 
 
     #
     # 36
@@ -693,7 +694,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The south Vault shield wall in Room III
     South_vault_wall_reg = -Surface_36 & -Surface_49  
-    South_vault_wall_cell = openmc.Cell(fill=Concrete, region=South_vault_wall_reg) 
+    South_vault_wall_cell = openmc.Cell(fill=Concrete, region=South_vault_wall_reg, name='South_vault_wall_cell') 
 
     #
     # 16
@@ -701,7 +702,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The east Vault shield wall in Room III with Room II entrance cutout
     East_vault_wall_reg = -Surface_16 & +Surface_48 & -Surface_49  
-    East_vault_wall_cell = openmc.Cell(fill=Concrete, region=East_vault_wall_reg) 
+    East_vault_wall_cell = openmc.Cell(fill=Concrete, region=East_vault_wall_reg, name='East_vault_wall_cell') 
 
     #
     # 38
@@ -713,7 +714,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The west Vault shield wall in Room III with Vault entrance cutout
     West_vault_wall_reg = -Surface_39 & +Surface_38  
-    West_vault_wall_cell = openmc.Cell(fill=Concrete, region=West_vault_wall_reg) 
+    West_vault_wall_cell = openmc.Cell(fill=Concrete, region=West_vault_wall_reg, name='West_vault_wall_cell') 
 
     #
     # 37
@@ -721,7 +722,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The top (roof) Vault shield wall in Room III
     Vault_ceiling_reg = -Surface_37 & -Surface_49  
-    Vault_ceiling_cell = openmc.Cell(fill=Concrete, region=Vault_ceiling_reg) 
+    Vault_ceiling_cell = openmc.Cell(fill=Concrete, region=Vault_ceiling_reg, name='Vault_ceiling_cell') 
 
     #
     # 12
@@ -729,7 +730,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The bottom Vault floor in Room III 
     Vault_floor_reg = -Surface_12 & -Surface_48  
-    Vault_floor_cell = openmc.Cell(fill=Concrete, region=Vault_floor_reg) 
+    Vault_floor_cell = openmc.Cell(fill=Concrete, region=Vault_floor_reg, name='Vault_floor_cell') 
 
     # 23
     Surface_23 = openmc.model.RectangularParallelepiped(1104.9, 2254.9, 668.34, 749.62, 0.0, 363.22)
@@ -740,27 +741,27 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The north Vault shield wall in Room III with beamline cutouts
     North_vault_wall_reg = -Surface_23 & -Surface_49 & +Surface_11 & +Surface_102  
-    North_vault_wall_cell = openmc.Cell(fill=Concrete, region=North_vault_wall_reg) 
+    North_vault_wall_cell = openmc.Cell(fill=Concrete, region=North_vault_wall_reg, name='North_vault_wall_cell') 
 
     # The north foundation wall in Room II
     Region_29 = -Surface_53 & -Surface_49  
-    Cell_29 = openmc.Cell(fill=Concrete, region=Region_29) 
+    Cell_29 = openmc.Cell(fill=Concrete, region=Region_29, name='Cell_29') 
 
     # The north-east pillar in Room IV 
     Region_30 = -Surface_85  
-    Cell_30 = openmc.Cell(fill=Concrete, region=Region_30) 
+    Cell_30 = openmc.Cell(fill=Concrete, region=Region_30, name='Cell_30') 
 
     # The north-west pillar in Room IV 
     Region_31 = -Surface_86  
-    Cell_31 = openmc.Cell(fill=Concrete, region=Region_31) 
+    Cell_31 = openmc.Cell(fill=Concrete, region=Region_31, name='Cell_31') 
 
     # Small CMU extenion in NW corner of Room IV (Piece 0)
     Region_32 = -Surface_80  
-    Cell_32 = openmc.Cell(fill=Concrete, region=Region_32) 
+    Cell_32 = openmc.Cell(fill=Concrete, region=Region_32, name='Cell_32') 
 
     # Small CMU extenion in NW corner of Room IV (Piece 1)
     Region_33 = -Surface_81  
-    Cell_33 = openmc.Cell(fill=Concrete, region=Region_33) 
+    Cell_33 = openmc.Cell(fill=Concrete, region=Region_33, name='Cell_33') 
 
     #
     # 82
@@ -776,115 +777,115 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The I-beam support the main Vault shield door in Room III
     I_beam_reg = -Surface_82 | -Surface_83 | -Surface_84  
-    I_beam_cell = openmc.Cell(fill=Material_6, region=I_beam_reg) 
+    I_beam_cell = openmc.Cell(fill=Material_6, region=I_beam_reg, name='I_beam_cell') 
 
     # The GWB wall separating the Maze from RPO storage 
     Region_35 = -Surface_46  
-    Cell_35 = openmc.Cell(fill=Material_8, region=Region_35) 
+    Cell_35 = openmc.Cell(fill=Material_8, region=Region_35, name='Cell_35') 
 
     # The GWB wall separating the Maze from RPO storage 
     Region_36 = -Surface_47  
-    Cell_36 = openmc.Cell(fill=Material_8, region=Region_36) 
+    Cell_36 = openmc.Cell(fill=Material_8, region=Region_36, name='Cell_36') 
 
     # The southern door frame in Room II separating Maze from hallway 
     Region_37 = -Surface_50  
-    Cell_37 = openmc.Cell(fill=Material_8, region=Region_37) 
+    Cell_37 = openmc.Cell(fill=Material_8, region=Region_37, name='Cell_37') 
 
     # The northern door frame in Room II separating Maze from hallway  
     Region_38 = -Surface_51  
-    Cell_38 = openmc.Cell(fill=Material_8, region=Region_38) 
+    Cell_38 = openmc.Cell(fill=Material_8, region=Region_38, name='Cell_38') 
 
     # The bottom-middle pillar in Room II (Pillar 4) 
     Region_39 = -Surface_59  
-    Cell_39 = openmc.Cell(fill=Concrete, region=Region_39) 
+    Cell_39 = openmc.Cell(fill=Concrete, region=Region_39, name='Cell_39') 
 
     # The middle-middle pillar in Room II (Pillar 5)  
     Region_40 = -Surface_60  
-    Cell_40 = openmc.Cell(fill=Concrete, region=Region_40) 
+    Cell_40 = openmc.Cell(fill=Concrete, region=Region_40, name='Cell_40') 
 
     # The top-middle pillar in Room II (Pillar 6)   
     Region_41 = -Surface_61  
-    Cell_41 = openmc.Cell(fill=Concrete, region=Region_41) 
+    Cell_41 = openmc.Cell(fill=Concrete, region=Region_41, name='Cell_41') 
 
     # The bottom-right pillar in Room II (Pillar 1)  
     Region_42 = -Surface_56  
-    Cell_42 = openmc.Cell(fill=Concrete, region=Region_42) 
+    Cell_42 = openmc.Cell(fill=Concrete, region=Region_42, name='Cell_42') 
 
     # The middle-right pillar in Room II (Pillar 2)  
     Region_43 = -Surface_57  
-    Cell_43 = openmc.Cell(fill=Concrete, region=Region_43) 
+    Cell_43 = openmc.Cell(fill=Concrete, region=Region_43, name='Cell_43') 
 
     # The top-right pillar in Room II (Pillar 3)   
     Region_44 = -Surface_58  
-    Cell_44 = openmc.Cell(fill=Concrete, region=Region_44) 
+    Cell_44 = openmc.Cell(fill=Concrete, region=Region_44, name='Cell_44') 
 
     # The CMU wall in Room II separating NW13-015 and -016
     Region_45 = -Surface_72 & +Surface_40 & +Surface_41 & +Surface_56 & +Surface_57 & +Surface_58  
-    Cell_45 = openmc.Cell(fill=Concrete, region=Region_45) 
+    Cell_45 = openmc.Cell(fill=Concrete, region=Region_45, name='Cell_45') 
 
     # Small CMU wall bounding doors in Room II
     Region_46 = -Surface_73 & +Surface_58  
-    Cell_46 = openmc.Cell(fill=Concrete, region=Region_46) 
+    Cell_46 = openmc.Cell(fill=Concrete, region=Region_46, name='Cell_46') 
 
     # GWB wall in Room II separating the Maze from RPO storage
     Region_47 = -Surface_44 & +Surface_59 & +Surface_62  
-    Cell_47 = openmc.Cell(fill=Material_8, region=Region_47) 
+    Cell_47 = openmc.Cell(fill=Material_8, region=Region_47, name='Cell_47') 
 
     # GWB wall in Room II separating the Maze from RPO storage
     Region_48 = -Surface_45 & +Surface_59 & +Surface_60  
-    Cell_48 = openmc.Cell(fill=Material_8, region=Region_48) 
+    Cell_48 = openmc.Cell(fill=Material_8, region=Region_48, name='Cell_48') 
 
     # The square brick pillar connect above GWB walls
     Region_49 = -Surface_65 & +Surface_60  
-    Cell_49 = openmc.Cell(fill=Concrete, region=Region_49) 
+    Cell_49 = openmc.Cell(fill=Concrete, region=Region_49, name='Cell_49') 
 
     # The bottom-left pillar in Room II (Pillar 7)  
     Region_50 = -Surface_62  
-    Cell_50 = openmc.Cell(fill=Concrete, region=Region_50) 
+    Cell_50 = openmc.Cell(fill=Concrete, region=Region_50, name='Cell_50') 
 
     # The middle-left pillar in Room II (Pillar 8)  
     Region_51 = -Surface_63  
-    Cell_51 = openmc.Cell(fill=Concrete, region=Region_51) 
+    Cell_51 = openmc.Cell(fill=Concrete, region=Region_51, name='Cell_51') 
 
     # The top-left pillar in Room II (Pillar 9)  
     Region_52 = -Surface_64  
-    Cell_52 = openmc.Cell(fill=Concrete, region=Region_52) 
+    Cell_52 = openmc.Cell(fill=Concrete, region=Region_52, name='Cell_52') 
 
     # The door connecting the hallway to NW13-039 in Room IV 
     Region_54 = -Surface_78  
-    Cell_54 = openmc.Cell(fill=Material_7, region=Region_54) 
+    Cell_54 = openmc.Cell(fill=Material_7, region=Region_54, name='Cell_54') 
 
     # The door in Room IV (NW13-039) leading to the stairway 
     Region_55 = -Surface_77  
-    Cell_55 = openmc.Cell(fill=Material_7, region=Region_55) 
+    Cell_55 = openmc.Cell(fill=Material_7, region=Region_55, name='Cell_55') 
 
     # The door in Room II separating the Maze from the hallway
     Region_56 = -Surface_52  
-    Cell_56 = openmc.Cell(fill=Material_7, region=Region_56) 
+    Cell_56 = openmc.Cell(fill=Material_7, region=Region_56, name='Cell_56') 
 
     # The southern door into NW13-016 in Room II
     Region_57 = -Surface_66  
-    Cell_57 = openmc.Cell(fill=Material_7, region=Region_57) 
+    Cell_57 = openmc.Cell(fill=Material_7, region=Region_57, name='Cell_57') 
 
     # The southern door into NW13-015 in Room II 
     Region_58 = -Surface_67  
-    Cell_58 = openmc.Cell(fill=Material_7, region=Region_58) 
+    Cell_58 = openmc.Cell(fill=Material_7, region=Region_58, name='Cell_58') 
 
     # The northern door into NW13-015 in Room II  
     Region_59 = -Surface_68  
-    Cell_59 = openmc.Cell(fill=Material_7, region=Region_59) 
+    Cell_59 = openmc.Cell(fill=Material_7, region=Region_59, name='Cell_59') 
 
     # The northern door into NW13-016 in Room II 
     Region_60 = -Surface_69  
-    Cell_60 = openmc.Cell(fill=Material_7, region=Region_60) 
+    Cell_60 = openmc.Cell(fill=Material_7, region=Region_60, name='Cell_60') 
 
     # The south door into the hallway between NW13-016 and RPO in Room II
     Region_61 = -Surface_70  
-    Cell_61 = openmc.Cell(fill=Material_7, region=Region_61) 
+    Cell_61 = openmc.Cell(fill=Material_7, region=Region_61, name='Cell_61') 
 
     # The north door into the hallway between NW13-016 and RPO in Room II 
     Region_62 = -Surface_71  
-    Cell_62 = openmc.Cell(fill=Material_7, region=Region_62) 
+    Cell_62 = openmc.Cell(fill=Material_7, region=Region_62, name='Cell_62') 
 
     #
     # Inner surface defining the top/bottom DANTE selection magnets
@@ -896,7 +897,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The bottom DANTE beamline selection magnet in Room III
     DANTE_vault_bot_magnet_reg = -Surface_30 & +Surface_28  
-    DANTE_vault_bot_magnet_cell = openmc.Cell(fill=Material_2, region=DANTE_vault_bot_magnet_reg) 
+    DANTE_vault_bot_magnet_cell = openmc.Cell(fill=Material_2, region=DANTE_vault_bot_magnet_reg, name='DANTE_vault_bot_magnet_cell') 
 
     #
     # Outer surface defining the top DANTE selection magnet
@@ -904,7 +905,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The top DANTE beamline selection magnet in Room III
     DANTE_vault_top_magnet_reg = -Surface_35 & +Surface_28  
-    DANTE_vault_top_magnet_cell = openmc.Cell(fill=Material_2, region=DANTE_vault_top_magnet_reg) 
+    DANTE_vault_top_magnet_cell = openmc.Cell(fill=Material_2, region=DANTE_vault_top_magnet_reg, name='DANTE_vault_top_magnet_cell') 
 
     #
     # Surface definition for selection magnet cutout of surface #27
@@ -932,41 +933,9 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
 
     # The DANTE beamline selection magnet stand in Room III
     DANTE_vault_mag_stand_reg = (-Surface_27 & +Surface_21) | -Surface_29 | -Surface_31 | -Surface_33 | -Surface_34  
-    DANTE_vault_mag_stand_cell = openmc.Cell(fill=Aluminum, region=DANTE_vault_mag_stand_reg) 
+    DANTE_vault_mag_stand_cell = openmc.Cell(fill=Aluminum, region=DANTE_vault_mag_stand_reg, name='DANTE_vault_mag_stand_cell') 
 
-    # Poly Cyclotron Shield in Room II
-    # 103
-    Surface_103 = openmc.model.RectangularParallelepiped(1270.0, 1570.0, 850.0, 950.0, 0.0, 150.0)
 
-    # 104
-    Surface_104 = openmc.model.RectangularParallelepiped(1270.0, 1370.0, 750.0, 850.0, 0.0, 150.0)
-
-    # 105
-    Surface_105 = openmc.model.RectangularParallelepiped(1470.0, 1570.0, 750.0, 850.0, 0.0, 150.0)
-
-    # 106
-    Surface_106 = openmc.model.RectangularParallelepiped(1270.0, 1570.0, 750.0, 950.0, 150.0, 200.0)
-
-    # Poly Cyclotron Shield 
-    Region_69 = -Surface_103 | -Surface_104 | -Surface_105 | -Surface_106  
-    Cell_69 = openmc.Cell(fill=BPE, region=Region_69) 
-
-    # Lead Cyclotron Shield in Room II
-    # 107
-    Surface_107 = openmc.model.RectangularParallelepiped(1265.0, 1575.0, 950.0, 955.0, 0.0, 200.0)
-
-    # 108
-    Surface_108 = openmc.model.RectangularParallelepiped(1265.0, 1270.0, 750.0, 950.0, 0.0, 200.0)
-
-    # 109
-    Surface_109 = openmc.model.RectangularParallelepiped(1570.0, 1575.0, 750.0, 950.0, 0.0, 200.0)
-
-    # 110
-    Surface_110 = openmc.model.RectangularParallelepiped(1265.0, 1575.0, 750.0, 955.0, 200.0, 205.0)
-
-    # Lead Cyclotron Shield 
-    Region_70 = -Surface_107 | -Surface_108 | -Surface_109 | -Surface_110  
-    Cell_70 = openmc.Cell(fill=Lead, region=Region_70) 
 
     # Portland Iron Concrete Shield in Vault
     # 111
@@ -1086,7 +1055,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
         # (+Surface_111 & +Surface_112 & +Surface_113 & +Surface_114) & \
         # (+Surface_121 | -Surface_119) & (+Surface_120 | -Surface_118) & +Surface_117 & +Surface_116 & \
         # ~Region_72  
-    Cell_28 = openmc.Cell(fill=Air, region=Region_28) 
+    Cell_28 = openmc.Cell(fill=Air, region=Region_28, name='Cell_28') 
 
     ##### s_wall_lev1_w Western portion of south wall of NW13 on level 1 (first floor)
     # Cell 8 is control room south wall
@@ -1197,7 +1166,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
             | -w_wall_lev1_bot_z | +w_wall_lev1_top_z) \
         & (+lev1_ceil_rpp | +Surface_49)
 
-    Cell_900 = openmc.Cell(fill=None, region=Region_1) 
+    Cell_900 = openmc.Cell(fill=None, region=Region_1, name='Cell_900') 
 
 
     Cells = [Cell_1000, Cell_900, Cell_2, Cell_3, Cell_4, Cell_5, Cell_6, Cell_7, 
@@ -1212,7 +1181,7 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
         Cell_42, Cell_43, Cell_44, Cell_45, Cell_46, Cell_47, Cell_48, Cell_49, Cell_50, 
         Cell_51, Cell_52, Cell_54, Cell_55, Cell_56, Cell_57, Cell_58, Cell_59, 
         Cell_60, Cell_61, Cell_62, DANTE_vault_bot_magnet_cell, DANTE_vault_top_magnet_cell, 
-        DANTE_vault_mag_stand_cell, Cell_69, Cell_70, 
+        DANTE_vault_mag_stand_cell, 
         # Cell_71, Cell_72, 
         # DT_BPE_shield_cell,
         # DT_enclosure_cell, DT_conc_shield_cell,
@@ -1232,9 +1201,12 @@ def build_vault_model(settings=openmc.Settings(), tallies=openmc.Tallies(),
     geometry.remove_redundant_surfaces() 
     # print(geometry.get_all_cells())
 
+    vol_calc = openmc.VolumeCalculation([Cell_28], int(1e7))
+    settings.volume_calculations = [vol_calc]
 
     vault_model = openmc.model.Model(geometry=geometry, materials=materials, settings=settings, 
-            tallies=tallies)
+            tallies=tallies,
+            plots=plots)
 
     return vault_model
 
