@@ -13,6 +13,7 @@ settings.source = src
 settings.batches = 100
 settings.inactive = 0
 settings.particles = int(1e5)
+settings.photon_transport = True
 
 water = openmc.Material(name='water')
 water.add_element('O', 1/3)
